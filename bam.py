@@ -14,10 +14,9 @@ PORT = 30559
 
 
 class App(object):
-  def __init__(self, name, port, host="localhost"):
-    self.name = name
-    self.port = port
+  def __init__(self, host, port):
     self.host = host
+    self.port = port
     self.proc = None
 
   @property
@@ -40,6 +39,11 @@ class App(object):
   def root(self):
     """Return the real root directory of this app."""
     return os.path.expanduser("~/.bam/%s" % self.name)
+
+  @property
+  def name(self):
+    """Return the name (hostname minus the TLD) of this app."""
+    return self.host.rsplit(".", 1)[0]
 
   def start(self):
     print "Starting %r on %r" % (self.name, self.port)
@@ -64,10 +68,13 @@ class App(object):
 
     failures = 0
 
+    headers["X-Forwarded-Host"] = self.host
+    headers["X-Forwarded-Server"] = self.host
+
     while True:
       try:
-        conn = httplib.HTTPConnection(self.host, self.port)
-        conn.request("GET", path)
+        conn = httplib.HTTPConnection("localhost", self.port)
+        conn.request("GET", path, headers=headers)
         return conn.getresponse()
 
       # If the port isn't open yet, keep on trying. The server probably hasn't
@@ -120,15 +127,16 @@ class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
     if resp:
 
       self.send_response(resp.status)
+
       for header in resp.getheaders():
         self.send_header(*header)
+
       self.end_headers()
       self.wfile.write(resp.read())
 
   def app(self):
     """Return an app instance to handle this request."""
-    name, tld = self.hostname().rsplit(".", 1)
-    return self.server.app(name)
+    return self.server.app(self.hostname())
 
   def hostname(self):
     """Return the bare hostname of this request."""
