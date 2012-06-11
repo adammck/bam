@@ -104,12 +104,11 @@ class App(object):
   # painful as I remember.
   def _connect(self, command, data=None, env=None, cwd=None):
     command_str = envoy.expand_args(command).pop()
-    environ = dict(os.environ)
-    environ.update(env or {})
 
     proc = subprocess.Popen(
       command_str,
       cwd=cwd,
+      env=dict(),
       stdin=None,
       stdout=open("%s/bam.stdout.log" % cwd, "w"),
       stderr=open("%s/bam.stderr.log" % cwd, "w"))
