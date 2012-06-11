@@ -49,6 +49,17 @@ $ ln -s /path/to/myapp
 Your app is now available at **`http://myapp.bam`**.
 
 
+### Virtualenv
+
+To launch an app in a virtualenv, create a file named `.venv` containing the
+path to the virtualenv in the project root:
+
+```
+$ cd /path/to/myapp
+$ echo "~/.virtualenv/myapp" > .venv
+```
+
+
 ## License
 
 [Bam] [repo] is free software, available under the [MIT license] [license]

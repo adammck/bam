@@ -27,13 +27,25 @@ class App(object):
   @property
   def python(self):
     """Return the absolute path to the Python interpreter for this app."""
-    return "%s/bin/python" % self.venv
+
+    if self.venv:
+      return "%s/bin/python" % self.venv
+
+    else:
+      return "python"
 
   @property
   def venv(self):
-    """Return the path to the virtualenv for this app."""
-    rel_path = open("%s/.venv" % self.root).read().strip()
-    return os.path.expanduser(rel_path)
+    """
+    Return the path to the virtualenv for this app, as specified by the `.venv`
+    file in the project root. Return `None` if the file doesn't exist.
+    """
+
+    filename = "%s/.venv" % self.root
+
+    if os.path.exists(filename):
+      venv = open(filename).read().strip()
+      return os.path.expanduser(venv)
 
   @property
   def root(self):
@@ -46,7 +58,7 @@ class App(object):
     return self.host.rsplit(".", 1)[0]
 
   def start(self):
-    print "Starting %r on %r" % (self.name, self.port)
+    print "Starting %r on %r in venv %r" % (self.name, self.port, self.venv)
     self.proc = self._connect(self.cmd, cwd=self.root)
 
   def stop(self):
