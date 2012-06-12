@@ -48,6 +48,17 @@ class App(object):
       return os.path.expanduser(venv)
 
   @property
+  def environment(self):
+    filename = "%s/.bam-env" % self.root
+
+    try:
+      with open(filename) as f:
+        return self._parse_env(f.read())
+
+    except:
+      return { }
+
+  @property
   def root(self):
     """Return the real root directory of this app."""
     return os.path.expanduser("~/.bam/%s" % self.name)
@@ -57,8 +68,19 @@ class App(object):
     """Return the name (hostname minus the TLD) of this app."""
     return self.host.rsplit(".", 1)[0]
 
+  def _parse_env(self, env_str):
+    """Parse an environment file (typically `.bam-env`) into a dict."""
+
+    env = {}
+
+    for line in env_str.strip().split():
+      key, val = line.split("=", 1)
+      env[key] = val
+
+    return env
+
   def start(self):
-    print "Starting %r on %r in venv %r" % (self.name, self.port, self.venv)
+    print "Starting %r on %r in venv %r with env %r" % (self.name, self.port, self.venv, self.environment)
     self.proc = self._connect(self.cmd, cwd=self.root)
 
   def stop(self):
@@ -108,7 +130,7 @@ class App(object):
     proc = subprocess.Popen(
       command_str,
       cwd=cwd,
-      env=dict(),
+      env=self.environment,
       stdin=None,
       stdout=open("%s/bam.stdout.log" % cwd, "w"),
       stderr=open("%s/bam.stderr.log" % cwd, "w"))

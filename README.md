@@ -48,15 +48,25 @@ $ ln -s /path/to/myapp
 
 Your app is now available at **`http://myapp.bam`**.
 
-
 ### Virtualenv
 
 To launch an app in a virtualenv, create a file named `.venv` containing the
-path to the virtualenv in the project root:
+path to the virtualenv in the project root. For example:
 
 ```
-$ cd /path/to/myapp
-$ echo "~/.virtualenv/myapp" > .venv
+~/.virtualenv/myapp
+```
+
+### Environment Variables
+
+To configure the environment in which an app is launched, create a file named
+`.bam-vars` containing one variable per line in the `NAME=VALUE` format in the
+project root. For example:
+
+```
+SECRET_KEY=aaaaaa
+TWITTER_CONSUMER_KEY=bbbbbb
+TWITTER_CONSUMER_SECRET=cccccc
 ```
 
 
