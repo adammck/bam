@@ -134,7 +134,7 @@ class Server(BaseHTTPServer.HTTPServer):
 
 class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
   def do_GET(self):
-    resp = self.app().request(self.path, self.headers)
+    resp = self.app().request(self.path, dict(self.headers))
     if resp:
 
       self.send_response(resp.status)
