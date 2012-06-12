@@ -1,17 +1,12 @@
 #!/usr/bin/env python
 # vim: et ts=2 sw=2
 
-import BaseHTTPServer
 import subprocess
 import httplib
 import envoy
 import socket
 import time
-import sys
 import os
-
-PORT = 30559
-
 
 class App(object):
   def __init__(self, host, port):
@@ -136,55 +131,3 @@ class App(object):
       stderr=open("%s/bam.stderr.log" % cwd, "w"))
 
     return envoy.ConnectedCommand(process=proc)
-
-
-class Server(BaseHTTPServer.HTTPServer):
-  counter = 0
-  pool = {}
-
-  def app(self, name):
-    if name not in self.pool:
-      port = PORT + self.next_port()
-      self.pool[name] = App(name, port)
-
-    return self.pool[name]
-
-  def next_port(self):
-    self.counter += 1
-    return self.counter
-
-
-class Handler(BaseHTTPServer.BaseHTTPRequestHandler):
-  def do_GET(self):
-    resp = self.app().request(self.path, dict(self.headers))
-    if resp:
-
-      self.send_response(resp.status)
-
-      for header in resp.getheaders():
-        self.send_header(*header)
-
-      self.end_headers()
-      self.wfile.write(resp.read())
-
-  def app(self):
-    """Return an app instance to handle this request."""
-    return self.server.app(self.hostname())
-
-  def hostname(self):
-    """Return the bare hostname of this request."""
-    return self.netloc().split(":")[0]
-
-  def netloc(self):
-    """Return the netloc (host:port) of this request."""
-    return self.headers.getheader("host")
-
-  # Silence the request log.
-  def log_message(self, format, *args):
-    pass
-
-
-if __name__ == "__main__":
-  server_address = ('127.0.0.1', PORT)
-  httpd = Server(server_address, Handler)
-  httpd.serve_forever()

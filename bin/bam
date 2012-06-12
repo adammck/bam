@@ -1,0 +1,8 @@
+#!/usr/bin/env python
+# vim: et ts=2 sw=2
+
+import bam
+
+server_address = ("127.0.0.1", 30559)
+httpd = bam.Server(server_address, bam.Handler)
+httpd.serve_forever()
