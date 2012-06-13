@@ -9,15 +9,16 @@ import time
 import os
 
 class App(object):
-  def __init__(self, host, port):
+  def __init__(self, host, port, root="~/.bam"):
     self.host = host
     self.port = port
+    self.root = root
     self.proc = None
 
   @property
   def cmd(self):
-    """Return the command to start this app."""
-    return "%s manage.py runserver %d" % (self.python, self.port)
+    """Return the command to start this app, excluding the Python interpreter."""
+    return "manage.py runserver %d" % (self.port)
 
   @property
   def python(self):
@@ -36,7 +37,7 @@ class App(object):
     file in the project root. Return `None` if the file doesn't exist.
     """
 
-    filename = "%s/.venv" % self.root
+    filename = "%s/.venv" % self.path
 
     if os.path.exists(filename):
       venv = open(filename).read().strip()
@@ -44,7 +45,7 @@ class App(object):
 
   @property
   def environment(self):
-    filename = "%s/.bam-env" % self.root
+    filename = "%s/.bam-vars" % self.path
 
     try:
       with open(filename) as f:
@@ -54,9 +55,9 @@ class App(object):
       return { }
 
   @property
-  def root(self):
-    """Return the real root directory of this app."""
-    return os.path.expanduser("~/.bam/%s" % self.name)
+  def path(self):
+    """Return the path to this app."""
+    return os.path.join(os.path.expanduser(self.root), self.name)
 
   @property
   def name(self):
@@ -76,7 +77,7 @@ class App(object):
 
   def start(self):
     print "Starting %r on %r in venv %r with env %r" % (self.name, self.port, self.venv, self.environment)
-    self.proc = self._connect(self.cmd, cwd=self.root)
+    self.proc = self._connect("%s %s" % (self.python, self.cmd), cwd=self.path)
 
   def stop(self):
     self.proc.kill()
