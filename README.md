@@ -1,12 +1,16 @@
 # Bam!
 
-Bam is like [Pow] [pow], but for [Django] [django] and friends.  
-Check it out, but probably don't use it yet.
+Bam is like [Pow][pow], but for [Django][django] and friends.  
+Check it out, but ~~probably~~ don't use it ~~yet~~.
 
+# Unmaintained :skull:
+
+This tool has been broken for some years. It remains available as a historical
+curiosity. Pull requests to fix it are welcome.
 
 ## Installation
 
-1. Bam currently depends on [Dnsmasq] [masq].  
+1. Bam currently depends on [Dnsmasq][masq].  
    Installing and configuring it is simple:
 
    ```
@@ -25,7 +29,7 @@ Check it out, but probably don't use it yet.
    ```
 
 3. Clone Bam via GitHub for now. It's not on PyPi yet.  
-   You'll probably want to create a [virtualenv] [venv] first.
+   You'll probably want to create a [virtualenv][venv] first.
 
    ```
    $ git clone git://github.com/adammck/bam.git
@@ -72,7 +76,7 @@ TWITTER_CONSUMER_SECRET=cccccc
 
 ## License
 
-[Bam] [repo] is free software, available under the [MIT license] [license]
+[Bam][repo] is free software, available under the [MIT license][license]
 
 
 
